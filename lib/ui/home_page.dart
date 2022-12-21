@@ -180,7 +180,6 @@ class _HomePageState extends State<HomePage> {
             },
           );
         } else {
-          //O botão carregar mais não esta aparecendo.
           return GestureDetector(
             onTap: () {
               setState(() {
