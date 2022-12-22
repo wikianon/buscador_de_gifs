@@ -13,35 +13,41 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class GifRepository{
   //variavel nullable para buscar os giffs
   //para trazer os gif's e fazer as comparaçoes
   // a variavel tem que ser do tipo nullable.
-  String? _search;
+  String? search;
 
   //variavel para saltar a quantidade de gif's
-  int _offset = 0;
+  int offset = 0;
 
-  Future<Map> _getGifs() async {
+  Future<Map> getGifs() async {
     http.Response response;
 
     //Para a variável _search ser verificada como null ela precisa ser Nullable
-    if (_search == null || _search!.isEmpty) {
+    if (search == null || search!.isEmpty) {
       response = await http.get(Uri.parse(
           "https://api.giphy.com/v1/gifs/trending?api_key=f7ToaKTLTCKGcdMevenFOg5aN1r0hmqq&limit=20&rating=g"));
     } else {
       response = await http.get(Uri.parse(
-          "https://api.giphy.com/v1/gifs/search?api_key=f7ToaKTLTCKGcdMevenFOg5aN1r0hmqq&q=$_search&limit=19&offset=$_offset&rating=g&lang=pt"));
+          "https://api.giphy.com/v1/gifs/search?api_key=f7ToaKTLTCKGcdMevenFOg5aN1r0hmqq&q=$search&limit=19&offset=$offset&rating=g&lang=pt"));
     }
 
     return jsonDecode(response.body);
   }
 
+}
+
+class _HomePageState extends State<HomePage> {
+
+ final gifRepository = GifRepository();
+
   @override
   void initState() {
     super.initState();
 
-    _getGifs().then((map) {
+    gifRepository.getGifs().then((map) {
       print(map);
     });
   }
@@ -52,7 +58,9 @@ class _HomePageState extends State<HomePage> {
       linkUrl: link,
     );
   }
-  
+
+ 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,18 +86,18 @@ class _HomePageState extends State<HomePage> {
               //Para pesquisarmos as imagens
               onSubmitted: (text) {
                 setState(() {
-                  _search = text;
+                  gifRepository.search = text;
 
                   //caso seja pesquisado outro titulo de gif's
                   //temos que resetar o offset para recarregar novamente.
-                  _offset = 0;
+                  gifRepository.offset = 0;
                 });
               },
             ),
           ),
           Expanded(
             child: FutureBuilder(
-              future: _getGifs(),
+              future: gifRepository.getGifs(),
               builder: (context, snapshop) {
                 switch (snapshop.connectionState) {
                   case ConnectionState.waiting:
@@ -126,7 +134,7 @@ class _HomePageState extends State<HomePage> {
     //para que sobre um espaço no final diminuimos 1
     //na url caso nao esteja pesquisando
     //retorna data.length senao retorna data.length+1.
-    if (_search == null) {
+    if (gifRepository.search == null) {
       return data.length;
     } else {
 
@@ -146,7 +154,7 @@ class _HomePageState extends State<HomePage> {
       //contando a Lista de gifs usando o_getCount
       itemCount: _getCount(snapshot.data["data"]),
       itemBuilder: (context, index) {
-        if (_search == null || index < snapshot.data["data"].length)
+        if (gifRepository.search == null || index < snapshot.data["data"].length)
         {
           //Para aceitar clique na tela usaremos o GestureDetector.
           return GestureDetector(
@@ -186,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                 //Para carregar mais 19 imagens
                 //como editamos a url que trazia 20 gifs para trazer
                 //19 com isso alocamos um espaço para o botão carregar mais.
-                _offset += 19;
+                gifRepository.offset += 19;
               });
             },
             
