@@ -204,13 +204,13 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
-                  ),
-                )
+                  ), //TextStyle
+                ) //Text
               ],
-            ), 
-          );
+            ),  //Column
+          ); //GestureDetector
         }
       },
-    );
+    ); //GridView.builder
   }
 }
