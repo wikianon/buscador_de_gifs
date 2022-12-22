@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_share/flutter_share.dart';
 import 'package:share/share.dart';
 
 class GifPage extends StatelessWidget {
-  const GifPage({required this.gifData});
+  const GifPage({super.key, required this.gifData});
 
   final Map gifData;
 
